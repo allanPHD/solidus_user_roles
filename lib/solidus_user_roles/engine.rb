@@ -27,4 +27,14 @@ module SolidusUserRoles
 
 
     def self.activate
-      D
+      Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+      unless Rails.env == 'test'
+        SolidusUserRoles::Engine.load_custom_permissions
+      end
+    end
+
+    config.to_prepare &method(:activate).to_proc
+  end
+end
